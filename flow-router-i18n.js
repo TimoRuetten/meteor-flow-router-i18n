@@ -11,7 +11,7 @@ const FlowRouterI18nHandle = class {
 
     // Creating a FlowRouter group
     this._i18nGroup = FlowRouter.group({
-      prefix: '/:langCode',
+      prefix: '/:langCode?',
       name,
       triggersEnter: [(context, redirect)=>{
         let {params, route, queryParams} = context;
@@ -32,6 +32,9 @@ const FlowRouterI18nHandle = class {
             this._language = langCode;
             if (Meteor.isClient) TAPi18n.setLanguage(langCode);
           }
+        } else {
+          params.langCode = TAPi18n._fallback_language;
+          redirect('/:langCode', params, queryParams);
         }
       }]
     });
@@ -52,7 +55,6 @@ const FlowRouterI18nHandle = class {
 
 FlowRouterI18n = new FlowRouterI18nHandle();
 FlowRouterI18nGroup = FlowRouterI18n._i18nGroup;
-
 
   if (Meteor.isClient) {
     Tracker.autorun(function(){
